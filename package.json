@@ -1,0 +1,30 @@
+{
+  "name": "nomos-stripe-checkout-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A safe GitHub repository fixture for testing Nomos integration scans",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "nomosFixtureNotes": {
+    "stripe": "Deliberately pinned to a pre-migration major. A fixture already on the latest SDK has nothing for a migration to do; this shop is on Stripe 9 across both its TypeScript and Python services, which is what makes subscriptions.del -> cancel a real, applicable change here."
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "stripe": "9.16.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}
