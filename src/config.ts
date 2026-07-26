@@ -12,6 +12,6 @@ export function loadConfig(): AppConfig {
     stripeSecretKey: process.env.STRIPE_SECRET_KEY ?? "sk_test_placeholder",
     stripeWebhookSecret:
       process.env.STRIPE_WEBHOOK_SECRET ?? "whsec_placeholder",
-    stripeApiVersion: process.env.STRIPE_API_VERSION ?? "2020-08-27",
+    stripeApiVersion: process.env.STRIPE_API_VERSION ?? "2025-03-31.basil",
   };
 }
