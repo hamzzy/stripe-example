@@ -16,14 +16,14 @@ import stripe
 # Configuration by name. The value comes from the environment at runtime and
 # is never committed; the scanner records that STRIPE_SECRET_KEY is read here.
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY", "sk_test_placeholder")
-stripe.api_version = os.environ.get("STRIPE_API_VERSION", "2020-08-27")
+stripe.api_version = os.environ.get("STRIPE_API_VERSION", "2025-03-31.basil")
 
 STRIPE_CUSTOMERS_ENDPOINT = "https://api.stripe.com/v1/customers"
 
 
 def cancel_delinquent_subscription(subscription_id: str) -> object:
     """Target of migration rule `stripe.python.subscription-delete-to-cancel`."""
-    return stripe.Subscription.delete(subscription_id)
+    return stripe.Subscription.cancel(subscription_id)
 
 
 def retrieve_customer(customer_id: str) -> object:
