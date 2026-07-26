@@ -1,0 +1,68 @@
+name: "Nomos Maintenance Executor"
+description: >-
+  Applies a Nomos maintenance job inside your own GitHub Actions boundary.
+  Nomos never clones your repository; the transformation runs here and only
+  structured results are reported back.
+author: "Nomos"
+
+branding:
+  icon: "git-pull-request"
+  color: "blue"
+
+inputs:
+  api-url:
+    description: "Nomos API base URL, e.g. https://api.nomos.dev"
+    required: true
+  maintenance-job-id:
+    description: "Job id from the repository_dispatch client_payload"
+    required: true
+  audience:
+    description: "OIDC audience the Nomos API expects"
+    required: false
+    default: "nomos-maintenance-executor"
+  push-branch:
+    description: >-
+      Push the resulting branch. Leave false for Suggest mode, which makes no
+      repository writes at all.
+    required: false
+    default: "false"
+
+outputs:
+  decision:
+    description: "Nomos verification decision for this job"
+    value: ${{ steps.execute.outputs.decision }}
+  changed-files:
+    description: "Number of files changed"
+    value: ${{ steps.execute.outputs.changed-files }}
+
+runs:
+  using: "composite"
+  steps:
+    # Pinned by commit SHA, never a floating tag, so the customer can audit
+    # exactly what ran (Section 5.2).
+    - name: Check out the repository at the job's base commit
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      with:
+        fetch-depth: 1
+        # A pull-request execution pushes its verified branch.  The outer
+        # workflow grants only contents:write, and Suggest jobs never push.
+        persist-credentials: true
+
+    - name: Set up Python
+      uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
+      with:
+        python-version: "3.13"
+
+    - name: Execute the maintenance job
+      id: execute
+      shell: bash
+      env:
+        NOMOS_API_URL: ${{ inputs.api-url }}
+        NOMOS_JOB_ID: ${{ inputs.maintenance-job-id }}
+        NOMOS_AUDIENCE: ${{ inputs.audience }}
+        NOMOS_PUSH_BRANCH: ${{ inputs.push-branch }}
+        # Provided by GitHub to the workflow; used once, to obtain a
+        # short-lived job-scoped Nomos credential.
+        ACTIONS_ID_TOKEN_REQUEST_URL: ${{ env.ACTIONS_ID_TOKEN_REQUEST_URL }}
+        ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ env.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
+      run: python3 "${GITHUB_ACTION_PATH}/executor.py"
