@@ -15,7 +15,10 @@ import stripe
 
 # Configuration by name. The value comes from the environment at runtime and
 # is never committed; the scanner records that STRIPE_SECRET_KEY is read here.
-stripe.api_key = os.environ.get("STRIPE_SECRET_KEY", "sk_test_placeholder")
+stripe.api_key = os.environ.get(
+    "STRIPE_SECRET_KEY",
+    "replace-with-stripe-secret-key",
+)
 stripe.api_version = os.environ.get("STRIPE_API_VERSION", "2020-08-27")
 
 STRIPE_CUSTOMERS_ENDPOINT = "https://api.stripe.com/v1/customers"

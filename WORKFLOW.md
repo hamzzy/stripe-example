@@ -70,9 +70,11 @@ policy engine has something to refuse; a permissive policy proves nothing.
 
 Two things are not code and cannot be worked around here:
 
-- **The ground-truth corpus is empty.** `packs/stripe/fixtures/ground_truth_corpus/`
-  has no labelled records, so Milestone 1 and 3 replay evaluation has nothing
-  to score. Stages 1 and 4 below will run, but their *quality* is unmeasured.
+- **The ground-truth corpus is awaiting human review.**
+  `packs/stripe/fixtures/ground_truth_corpus/` now contains 40 immutable
+  official-source records and hash-bound worksheets. They remain `unlabeled`
+  until a named primary labeler and a different reviewer approve them, so the
+  replay evaluator correctly refuses to declare Milestone 1 quality passed.
 - **The Stripe migration rules are unverified drafts.** They will not produce a
   deterministic transformation until a pack owner confirms them against
   Stripe's changelog. Stage 6 will route to `human_required` or the AI-residual
@@ -220,8 +222,9 @@ bad pack after it has already shipped code.
 
 ## What this fixture cannot prove
 
-- **Detection quality.** Without the ground-truth corpus, you can see that
-  extraction runs; you cannot see whether it is right.
+- **Milestone-level detection quality.** Collection has reached 40 records, but
+  the required primary labels, second-person approvals, and replay baseline
+  are still needed before claiming the quality gate.
 - **Multi-repository blast radius.** One repository, so the integration graph
   is trivial.
 - **Trust decay and execution-minute ceilings.** Open Questions 4 and 5 need

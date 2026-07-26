@@ -1,6 +1,9 @@
 import express from "express";
 
 import { loadConfig } from "./config.js";
+import { SupportReplyGenerator } from "./integrations/openai-client.js";
+import { SlackNotifier } from "./integrations/slack-notifier.js";
+import { ReceiptMessenger } from "./integrations/twilio-sms.js";
 import { beginCheckout } from "./payments/checkout.js";
 import { StripeGateway } from "./payments/stripe-client.js";
 import { cancelSubscription } from "./payments/subscriptions.js";
@@ -8,7 +11,11 @@ import { grossAmount } from "./pricing/tax-rates.js";
 
 export function createApp() {
   const app = express();
-  const gateway = new StripeGateway(loadConfig());
+  const config = loadConfig();
+  const gateway = new StripeGateway(config);
+  const supportReplies = new SupportReplyGenerator(config);
+  const slack = new SlackNotifier(config);
+  const receipts = new ReceiptMessenger(config);
 
   app.get("/health", (_request, response) => {
     response.json({ status: "ok" });
@@ -34,6 +41,30 @@ export function createApp() {
   );
 
   app.use(express.json());
+  app.post("/support/draft-reply", async (request, response, next) => {
+    try {
+      response.json({
+        reply: await supportReplies.draftReply(String(request.body?.message ?? "")),
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+  app.post("/payments/:id/notify", async (request, response, next) => {
+    try {
+      await slack.notifyPaymentSucceeded(
+        String(request.body?.channel ?? "#payments"),
+        request.params.id,
+      );
+      await receipts.sendReceipt(
+        String(request.body?.phone ?? "+15005550006"),
+        request.params.id,
+      );
+      response.status(202).json({ accepted: true });
+    } catch (error) {
+      next(error);
+    }
+  });
   app.post("/checkout", async (request, response, next) => {
     try {
       const email = String(request.body?.email ?? "");

@@ -17,8 +17,11 @@
     "stripe": "Deliberately pinned to a pre-migration major. A fixture already on the latest SDK has nothing for a migration to do; this shop is on Stripe 9 across both its TypeScript and Python services, which is what makes subscriptions.del -> cancel a real, applicable change here."
   },
   "dependencies": {
+    "@slack/web-api": "^7.8.0",
     "express": "^5.1.0",
-    "stripe": "9.16.0"
+    "openai": "^4.104.0",
+    "stripe": "9.16.0",
+    "twilio": "^5.8.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",

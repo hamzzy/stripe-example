@@ -5,6 +5,23 @@ Exact counts grow as the scanner improves. What must not change is the
 must refuse to claim. The second table is the one worth checking first: a
 scan that over-claims is a worse failure than one that finds too little.
 
+## Confirmed multi-vendor inventory
+
+After enabling all bundled detector packs and confirming the candidates, the
+integration inventory should contain these four vendors for this repository:
+
+| Vendor | Evidence included in this fixture | Expected state |
+| --- | --- | --- |
+| Stripe | SDK, API version, Checkout/Customer/Subscription calls, webhook, env vars, hostname | Confirmed |
+| OpenAI | `openai` SDK, `OpenAI` client, chat completion call, `OPENAI_*` env var, hostname | Confirmed |
+| Slack | `@slack/web-api`, `WebClient`, `chat.postMessage`, `SLACK_*` env var | Confirmed |
+| Twilio | `twilio` SDK, client, `messages.create`, `TWILIO_*` env vars | Confirmed |
+
+Runway is the intersection of this confirmed inventory and the global
+Observatory. A Slack or Twilio Observatory change appears only after the
+corresponding candidate is confirmed in this workspace; it must never appear
+simply because Nomos observes that vendor globally.
+
 ## Customer Facts (Milestone 2)
 
 | Category | Expected evidence | Source file |
