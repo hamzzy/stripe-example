@@ -1,0 +1,69 @@
+# Tier 0.5 evidence in a Kubernetes manifest.
+#
+# Nomos must record the *names* here -- the environment variables, the secret
+# the deployment reads, the hosts it talks to -- and never their values. There
+# are no real secrets in this file, and the detector is built so that even if
+# there were, value-shaped material is dropped before a fact is created.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout
+  namespace: payments
+  labels:
+    app.kubernetes.io/name: checkout
+    app.kubernetes.io/part-of: billing
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: checkout
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: checkout
+    spec:
+      containers:
+        - name: checkout
+          image: ghcr.io/example/checkout:1.4.2
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          env:
+            - name: PORT
+              value: "3000"
+            - name: STRIPE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-credentials
+                  key: secret-key
+            - name: STRIPE_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-credentials
+                  key: webhook-secret
+            - name: STRIPE_API_VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: checkout-config
+                  key: stripe-api-version
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: checkout-config
+  namespace: payments
+data:
+  # The pinned Stripe API version. This is the fact that makes a dated vendor
+  # change either applicable or irrelevant to this deployment.
+  stripe-api-version: "2020-08-27"
+  host: api.stripe.com

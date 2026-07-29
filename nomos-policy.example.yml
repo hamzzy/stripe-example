@@ -1,0 +1,60 @@
+# Example workspace policy for this fixture.
+#
+# Copy this into the Nomos workspace policy for the workspace you connect this
+# repository to. It is written so that the policy engine has something to
+# actually refuse -- a policy that permits everything proves nothing.
+#
+# The three things this policy makes observable:
+#   1. `src/pricing/**` is forbidden, and src/pricing/tax-rates.ts references
+#      Stripe, so protected-path validation has a real candidate to block.
+#   2. `financial_calculation` is prohibited, so change classification has a
+#      class it must never auto-apply.
+#   3. `suggest` mode plus `auto_merge: false` means no repository write can
+#      happen without a human, which is the claim Milestones 4 and 5 make.
+
+version: 1
+mode: suggest
+
+allowed_actions:
+  - analyze
+  - generate_plan
+  - generate_dry_run
+  - create_pull_request
+
+forbidden_paths:
+  - src/pricing/**
+  - infra/**
+  - deploy/**
+  - .github/workflows/**
+
+allowed_change_classes:
+  - dependency_patch
+  - type_update
+  - fixture_update
+  - null_guard
+  - deprecated_method_replacement
+  - sdk_method_rename
+
+review_required_change_classes:
+  - retry_behavior
+  - webhook_behavior
+  - authentication_scope
+  - control_flow
+
+prohibited_change_classes:
+  - financial_calculation
+  - authorization_policy
+  - destructive_data_change
+  - secret_rotation
+
+limits:
+  max_files: 10
+  max_changed_lines: 300
+  max_dependencies: 2
+
+approval:
+  pull_request: 1
+  high_risk: 2
+
+auto_merge:
+  enabled: false

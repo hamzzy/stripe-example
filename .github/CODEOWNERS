@@ -1,0 +1,9 @@
+/src/payments/ @example-payments-team
+/src/pricing/ @example-finance-team
+/services/billing-reconciler/ @example-payments-team
+/infra/ @example-platform-team
+/deploy/ @example-platform-team
+/.github/workflows/ @example-platform-team
+
+# `src/app.ts` is deliberately left unowned so ownership coverage reports
+# something below 100% and the gap is visible rather than rounded away.
