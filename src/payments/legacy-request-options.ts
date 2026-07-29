@@ -12,7 +12,7 @@ const stripe = new Stripe(config.stripeSecretKey, {
 
 export function retrieveCustomerWithLegacyApiKey(customerId: string) {
   return stripe.customers.retrieve(customerId, {
-    api_key: config.stripeSecretKey,
+    apiKey: config.stripeSecretKey,
   });
 }
 
