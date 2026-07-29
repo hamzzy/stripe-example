@@ -23,7 +23,7 @@ export function createCustomerWithLegacyIdempotencyKey(
   return stripe.customers.create(
     { email },
     {
-      idempotency_key: requestKey,
+      idempotencyKey: requestKey,
     },
   );
 }
