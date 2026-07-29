@@ -36,7 +36,7 @@ export function retrieveConnectedAccount(accountId: string) {
 
 export function retrievePlatformBalance() {
   return stripe.balance.retrieve({
-    stripe_version: "2020-08-27",
+    apiVersion: "2020-08-27",
   });
 }
 
