@@ -10,9 +10,9 @@ give some part of Nomos something real to decide about.
 | What's in it | What it exercises |
 | --- | --- |
 | `stripe` dependency, import, constructor, pinned API version | SDK detection, version applicability |
-| OpenAI, Slack, and Twilio SDK dependencies plus direct client wrappers | multi-vendor inventory and direct SDK evidence |
+| OpenAI and Twilio SDK clients plus authenticated direct REST calls | real mixed SDK/API detection and reachable call paths |
 | `OPENAI_*`, `SLACK_*`, and `TWILIO_*` configuration | configuration discovery without shipping credentials |
-| Support reply and payment-notification routes | reachable OpenAI, Slack, and Twilio call paths |
+| SDK and REST support/payment routes | reachable OpenAI, Slack, and Twilio call paths |
 | Checkout, customer, subscription, invoice, webhook calls | operation-level usage evidence |
 | `STRIPE_*` env vars, `api.stripe.com`, `/webhooks/stripe` | Tier 0.5 config, hostname, and webhook detection |
 | `StripeGateway` wrapper | human wrapper confirmation, and re-matching when it moves |

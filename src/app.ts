@@ -1,8 +1,12 @@
 import express from "express";
 
 import { loadConfig } from "./config.js";
-import { SupportReplyGenerator } from "./integrations/openai-client.js";
+import {
+  draftReplyViaOpenAiRest,
+  SupportReplyGenerator,
+} from "./integrations/openai-client.js";
 import { SlackNotifier } from "./integrations/slack-notifier.js";
+import { sendReceiptViaTwilioRest } from "./integrations/twilio-rest.js";
 import { ReceiptMessenger } from "./integrations/twilio-sms.js";
 import { beginCheckout } from "./payments/checkout.js";
 import { StripeGateway } from "./payments/stripe-client.js";
@@ -50,6 +54,18 @@ export function createApp() {
       next(error);
     }
   });
+  app.post("/support/draft-reply-rest", async (request, response, next) => {
+    try {
+      response.json({
+        reply: await draftReplyViaOpenAiRest(
+          config,
+          String(request.body?.message ?? ""),
+        ),
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
   app.post("/payments/:id/notify", async (request, response, next) => {
     try {
       await slack.notifyPaymentSucceeded(
@@ -61,6 +77,18 @@ export function createApp() {
         request.params.id,
       );
       response.status(202).json({ accepted: true });
+    } catch (error) {
+      next(error);
+    }
+  });
+  app.post("/payments/:id/notify-rest", async (request, response, next) => {
+    try {
+      const receipt = await sendReceiptViaTwilioRest(
+        config,
+        String(request.body?.phone ?? "+15005550006"),
+        request.params.id,
+      );
+      response.status(202).json({ accepted: true, receipt });
     } catch (error) {
       next(error);
     }

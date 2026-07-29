@@ -22,8 +22,7 @@ export class ReceiptMessenger {
 }
 
 // Twilio deprecated region-only API hostnames and documents api.twilio.com as
-// the US1 replacement. This is never called; it is a deterministic scan and
-// maintenance target without storing or transmitting credentials.
+// the US1 replacement. This remains a migration target used by older jobs.
 export async function fetchLegacyRegionMessage(
   messageSid: string,
   authorization: string,
