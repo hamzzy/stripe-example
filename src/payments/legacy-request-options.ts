@@ -30,7 +30,7 @@ export function createCustomerWithLegacyIdempotencyKey(
 
 export function retrieveConnectedAccount(accountId: string) {
   return stripe.accounts.retrieve(accountId, {
-    stripe_account: accountId,
+    stripeAccount: accountId,
   });
 }
 
