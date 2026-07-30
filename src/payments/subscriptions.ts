@@ -19,13 +19,13 @@ const stripe = new Stripe(config.stripeSecretKey, {
 
 export async function cancelSubscription(subscriptionId: string) {
   // Target of migration rule `stripe.node.subscriptions-del-to-cancel`.
-  return stripe.subscriptions.del(subscriptionId);
+  return stripe.subscriptions.cancel(subscriptionId);
 }
 
 export async function cancelTrial(subscriptionId: string) {
   // A second call site, so the codemod has to change more than one line and
   // the diff-size and blast-radius calculations see a realistic patch.
-  return stripe.subscriptions.del(subscriptionId, {
+  return stripe.subscriptions.cancel(subscriptionId, {
     invoice_now: false,
     prorate: false,
   });
