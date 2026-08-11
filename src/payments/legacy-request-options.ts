@@ -45,3 +45,13 @@ export function retrievePaymentIntent(paymentIntentId: string) {
     stripeVersion: "2020-08-27",
   });
 }
+
+export function updateBalanceSettlementDelay(accountId: string) {
+  // The PRD 72 live fixture intentionally uses the pre-2025-07-30 preview
+  // parameter so Nomos has a real field-level migration to detect and apply.
+  // @ts-expect-error Stripe 9 predates the Balance Settings preview surface.
+  return stripe.balanceSettings.update(
+    { settlement_timing: { delay_days: 3 } },
+    { stripeAccount: accountId },
+  );
+}
