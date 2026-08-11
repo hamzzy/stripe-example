@@ -1,0 +1,31 @@
+# Added for the NOMOS PRD 72 live acceptance run.
+name: Nomos Maintenance
+
+on:
+  repository_dispatch:
+    types: [nomos-maintenance]
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: nomos-maintenance-${{ github.event.client_payload.maintenance_job_id }}
+  cancel-in-progress: false
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: true
+      - name: Run the Nomos maintenance job
+        uses: hamzzy/stripe-example/.github/actions/nomos-maintenance@ccbd78aa3e323515a2ed696e1b854f004b6cb00e
+        with:
+          api-url: https://nomos.nomoshq.xyz
+          maintenance-job-id: ${{ github.event.client_payload.maintenance_job_id }}
+          executor-dispatch-id: ${{ github.event.client_payload.executor_dispatch_id }}
+          action-input-digest: ${{ github.event.client_payload.action_input_digest }}
+          push-branch: true
