@@ -50,6 +50,7 @@ export function updateBalanceSettlementDelay(accountId: string) {
   // The PRD 72 live fixture intentionally uses the pre-2025-07-30 preview
   // parameter so Nomos has a real field-level migration to detect and apply.
   // Keep this call in the acceptance scan corpus until the migration is published.
+  // Revision marker: each live proof uses a new commit so the webhook starts a fresh scan.
   // @ts-expect-error Stripe 9 predates the Balance Settings preview surface.
   return stripe.balanceSettings.update(
     { settlement_timing: { delay_days: 3 } },
